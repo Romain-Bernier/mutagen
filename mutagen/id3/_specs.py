@@ -458,7 +458,7 @@ class EncodedTextSpec(Spec):
         Encoding.UTF8: ("utf8", b"\x00"),
     }
 
-    def __init__(self, name, default="", terminated: bool = True):
+    def __init__(self, name, default=u"", terminated: bool = True):
         super(EncodedTextSpec, self).__init__(name, default)
         self.terminated = terminated
 
