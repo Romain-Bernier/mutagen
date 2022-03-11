@@ -450,16 +450,17 @@ def iter_text_fixups(data, encoding):
 
 
 class EncodedTextSpec(Spec):
-
+    terminated: bool
     _encodings = {
-        Encoding.LATIN1: ('latin1', b'\x00'),
-        Encoding.UTF16: ('utf16', b'\x00\x00'),
-        Encoding.UTF16BE: ('utf_16_be', b'\x00\x00'),
-        Encoding.UTF8: ('utf8', b'\x00'),
+        Encoding.LATIN1: ("latin1", b"\x00"),
+        Encoding.UTF16: ("utf16", b"\x00\x00"),
+        Encoding.UTF16BE: ("utf_16_be", b"\x00\x00"),
+        Encoding.UTF8: ("utf8", b"\x00"),
     }
 
-    def __init__(self, name, default=u""):
+    def __init__(self, name, default="", terminated: bool = True):
         super(EncodedTextSpec, self).__init__(name, default)
+        self.terminated = terminated
 
     def read(self, header, frame, data):
         enc, term = self._encodings[frame.encoding]
@@ -482,7 +483,11 @@ class EncodedTextSpec(Spec):
     def write(self, config, frame, value):
         enc, term = self._encodings[frame.encoding]
         try:
-            return encode_endian(value, enc, le=True) + term
+            return (
+                encode_endian(value, enc, le=True) + term
+                if self.terminated
+                else encode_endian(value, enc, le=True)
+            )
         except UnicodeEncodeError as e:
             raise SpecError(e)
 

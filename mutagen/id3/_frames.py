@@ -864,9 +864,11 @@ class TXXX(TextFrame):
     """
 
     _framespec = [
-        EncodingSpec('encoding'),
-        EncodedTextSpec('desc'),
-        MultiSpec('text', EncodedTextSpec('text'), sep=u'\u0000', default=[]),
+        EncodingSpec("encoding"),
+        EncodedTextSpec("desc"),
+        MultiSpec(
+            "text", EncodedTextSpec("text", terminated=False), sep="\u0000", default=[]
+        ),
     ]
 
     @property
